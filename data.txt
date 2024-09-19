@@ -1,4 +1,5 @@
-"raw.githubusercontent.com"
+$uris = @(
+    "raw.githubusercontent.com"
 "github.com"
 "1drv.ms"
 "1drv.com"
@@ -6,7 +7,6 @@
 "drive.google.com"
 "azurewebsites.net"
 "dropbox.com"
-"mega.nz"
 "pcloud.com"
 "amazonaws.com"
 "twitter.com"
@@ -173,3 +173,26 @@
 "requestbin.net"
 "clbin.com"
 "ix.io"
+"mega.nz"
+)
+
+$timeout = 5
+$successCount = 0
+
+foreach($uri in $uris){
+    try{
+        $response = Invoke-WebRequest -Uri $uri -Method Head -TimeoutSec $timeout
+        $code = $response.StatusCode
+        if ($code -eq 200){
+            $successCount++
+            Write-Host $uri " OK" -ForegroundColor Green
+        }
+    }
+    catch{
+         Write-Host $uri " FAIL" -ForegroundColor Red
+    }
+    Start-Sleep -s 2
+}
+
+$perc = ($successCount * 100)/ $uris.Length 
+Write-Host "Total successful: "$successCount " (" $perc "%)"
